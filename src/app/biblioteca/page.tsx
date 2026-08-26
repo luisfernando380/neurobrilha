@@ -1,43 +1,42 @@
-import { redirect } from 'next/navigation';
-import { leerSesion } from '@/lib/session';
-import { getAdminClient } from '@/lib/supabase';
-import Salir from './salir';
+'use client';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { sb, urlPublicaPdf, lerToken, limparToken } from '@/lib/config';
 
-export const dynamic = 'force-dynamic';
+type Material = { id: string; titulo: string; descripcion: string | null; emoji: string | null; archivo: string; orden: number };
 
-type Material = {
-  id: string;
-  titulo: string;
-  descripcion: string | null;
-  emoji: string | null;
-  archivo: string;
-  orden: number;
-};
+export default function Biblioteca() {
+  const router = useRouter();
+  const [cargando, setCargando] = useState(true);
+  const [nombre, setNombre] = useState<string | null>(null);
+  const [materiales, setMateriales] = useState<Material[]>([]);
 
-export default async function Biblioteca() {
-  const sesion = await leerSesion();
-  if (!sesion) redirect('/');
+  useEffect(() => {
+    const tok = lerToken();
+    if (!tok) { router.replace('/'); return; }
+    sb.rpc('me_materiales', { tok }).then(({ data, error }) => {
+      if (error || !data || data.error) { limparToken(); router.replace('/'); return; }
+      setNombre(data.nombre || null);
+      setMateriales(data.materiales || []);
+      setCargando(false);
+    });
+  }, [router]);
 
-  const db = getAdminClient();
-  const { data } = await db
-    .from('materiales')
-    .select('id, titulo, descripcion, emoji, archivo, orden')
-    .eq('activo', true)
-    .order('orden', { ascending: true });
-  const materiales = (data || []) as Material[];
+  function salir() { limparToken(); router.replace('/'); }
 
-  const primerNombre = sesion.nombre?.split(' ')[0];
+  if (cargando) return <div className="cargando">Cargando tu contenido…</div>;
+  const primerNombre = nombre?.split(' ')[0];
 
   return (
     <>
       <header className="top">
         <div className="id"><span className="dot" /> Mujeres Edifican</div>
-        <Salir />
+        <button className="salir" onClick={salir}>Salir</button>
       </header>
 
       <section className="hero">
         <h2>Hola{primerNombre ? `, ${primerNombre}` : ''} 🌸</h2>
-        <p>Este es tu espacio. Aquí encontrarás todo tu contenido para descargar y leer cuando quieras.</p>
+        <p>Este es tu espacio. Aquí encontrarás todo tu contenido para leer y descargar cuando quieras.</p>
       </section>
 
       {materiales.length === 0 ? (
@@ -52,7 +51,7 @@ export default async function Biblioteca() {
               <div className="body">
                 <h3>{m.titulo}</h3>
                 {m.descripcion && <p>{m.descripcion}</p>}
-                <a className="abrir" href={`/api/material/${m.id}`} target="_blank" rel="noopener noreferrer">Abrir PDF</a>
+                <a className="abrir" href={urlPublicaPdf(m.archivo)} target="_blank" rel="noopener noreferrer">Abrir PDF</a>
               </div>
             </article>
           ))}

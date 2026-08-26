@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { sb, guardarToken } from '@/lib/config';
 
 type Paso = 'email' | 'crear' | 'login';
 
@@ -17,17 +18,12 @@ export default function Login() {
   async function verificar(e: React.FormEvent) {
     e.preventDefault();
     setError(''); setCargando(true);
-    try {
-      const r = await fetch('/api/auth/verificar', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const d = await r.json();
-      if (!r.ok) { setError(d.error || 'No pudimos verificar tu correo.'); return; }
-      setNombre(d.nombre || null);
-      setPaso(d.tieneSenha ? 'login' : 'crear');
-    } catch { setError('Error de conexion. Intenta de nuevo.'); }
-    finally { setCargando(false); }
+    const { data, error: err } = await sb.rpc('me_verificar', { correo: email });
+    setCargando(false);
+    if (err) { setError('Error de conexión. Intenta de nuevo.'); return; }
+    if (!data?.habilitada) { setError(data?.error || 'No pudimos verificar tu correo.'); return; }
+    setNombre(data.nombre || null);
+    setPaso(data.tieneSenha ? 'login' : 'crear');
   }
 
   async function crear(e: React.FormEvent) {
@@ -36,36 +32,26 @@ export default function Login() {
     if (password.length < 6) { setError('La contrasena debe tener al menos 6 caracteres.'); return; }
     if (password !== password2) { setError('Las contrasenas no coinciden.'); return; }
     setCargando(true);
-    try {
-      const r = await fetch('/api/auth/registrar', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const d = await r.json();
-      if (!r.ok) { setError(d.error || 'No pudimos crear tu cuenta.'); return; }
-      router.push('/biblioteca');
-    } catch { setError('Error de conexion. Intenta de nuevo.'); }
-    finally { setCargando(false); }
+    const { data, error: err } = await sb.rpc('me_registrar', { correo: email, clave: password });
+    setCargando(false);
+    if (err) { setError('Error de conexión. Intenta de nuevo.'); return; }
+    if (data?.error) { setError(data.error); return; }
+    guardarToken(data.token);
+    router.push('/biblioteca');
   }
 
   async function entrar(e: React.FormEvent) {
     e.preventDefault();
     setError(''); setCargando(true);
-    try {
-      const r = await fetch('/api/auth/login', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const d = await r.json();
-      if (!r.ok) { setError(d.error || 'No pudimos iniciar sesion.'); return; }
-      router.push('/biblioteca');
-    } catch { setError('Error de conexion. Intenta de nuevo.'); }
-    finally { setCargando(false); }
+    const { data, error: err } = await sb.rpc('me_login', { correo: email, clave: password });
+    setCargando(false);
+    if (err) { setError('Error de conexión. Intenta de nuevo.'); return; }
+    if (data?.error) { setError(data.error); return; }
+    guardarToken(data.token);
+    router.push('/biblioteca');
   }
 
-  function volver() {
-    setPaso('email'); setPassword(''); setPassword2(''); setError('');
-  }
+  function volver() { setPaso('email'); setPassword(''); setPassword2(''); setError(''); }
 
   return (
     <div className="auth-wrap">

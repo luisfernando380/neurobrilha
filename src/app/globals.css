@@ -88,3 +88,4 @@ input:disabled { background: #f7f2f0; color: var(--texto-suave); }
 .card .body p { font-size: 13px; color: var(--texto-suave); margin-top: 6px; flex: 1; }
 .card .abrir { margin-top: 14px; display: inline-block; text-align: center; padding: 11px; border-radius: 10px; font-weight: 700; font-size: 14px; color: #fff; text-decoration: none; background: linear-gradient(135deg, var(--rosa), var(--rosa-osc)); }
 .vacio { max-width: 640px; margin: 40px auto; text-align: center; color: var(--texto-suave); background:#fff; border:1px dashed var(--borde); border-radius:18px; padding:40px 24px; }
+.cargando { min-height: 100dvh; display: grid; place-items: center; color: var(--texto-suave); font-size: 15px; }
