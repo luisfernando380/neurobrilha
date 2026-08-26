@@ -76,7 +76,11 @@ input:disabled { background: #f7f2f0; color: var(--texto-suave); }
 .hero { padding: 40px 20px 10px; max-width: 1000px; margin: 0 auto; }
 .hero h2 { font-size: 26px; }
 .hero p { color: var(--texto-suave); margin-top: 8px; }
-.grid { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+.secciones { max-width: 1000px; margin: 0 auto; padding: 12px 20px 60px; }
+.seccion { margin-top: 26px; }
+.seccion-titulo { font-size: 15px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--rosa-osc); padding-bottom: 10px; margin-bottom: 4px; border-bottom: 2px solid var(--rosa-suave); }
+.card .body h4 { font-size: 16px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-top: 16px; }
 .card {
   background: #fff; border: 1px solid var(--borde); border-radius: 18px; overflow: hidden;
   box-shadow: var(--sombra); display: flex; flex-direction: column; transition: transform .12s, box-shadow .12s;

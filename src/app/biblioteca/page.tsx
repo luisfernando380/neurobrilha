@@ -3,7 +3,23 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { sb, urlPublicaPdf, lerToken, limparToken } from '@/lib/config';
 
-type Material = { id: string; titulo: string; descripcion: string | null; emoji: string | null; archivo: string; orden: number };
+type Material = {
+  id: string; titulo: string; descripcion: string | null; emoji: string | null;
+  archivo: string; categoria: string | null; orden: number; orden_categoria: number;
+};
+type Seccion = { nombre: string; items: Material[] };
+
+// Agrupa los materiales por categoria manteniendo el orden que viene del banco
+function agrupar(mats: Material[]): Seccion[] {
+  const secciones: Seccion[] = [];
+  for (const m of mats) {
+    const nombre = (m.categoria && m.categoria.trim()) || 'Materiales';
+    let sec = secciones.find((s) => s.nombre === nombre);
+    if (!sec) { sec = { nombre, items: [] }; secciones.push(sec); }
+    sec.items.push(m);
+  }
+  return secciones;
+}
 
 export default function Biblioteca() {
   const router = useRouter();
@@ -26,6 +42,7 @@ export default function Biblioteca() {
 
   if (cargando) return <div className="cargando">Cargando tu contenido…</div>;
   const primerNombre = nombre?.split(' ')[0];
+  const secciones = agrupar(materiales);
 
   return (
     <>
@@ -44,16 +61,23 @@ export default function Biblioteca() {
           <p>Muy pronto encontrarás aquí tus materiales. ¡Estamos preparándolos con cariño! 💗</p>
         </div>
       ) : (
-        <div className="grid">
-          {materiales.map((m) => (
-            <article className="card" key={m.id}>
-              <div className="cover">{m.emoji || '📖'}</div>
-              <div className="body">
-                <h3>{m.titulo}</h3>
-                {m.descripcion && <p>{m.descripcion}</p>}
-                <a className="abrir" href={urlPublicaPdf(m.archivo)} target="_blank" rel="noopener noreferrer">Abrir PDF</a>
+        <div className="secciones">
+          {secciones.map((sec) => (
+            <section className="seccion" key={sec.nombre}>
+              <h3 className="seccion-titulo">{sec.nombre}</h3>
+              <div className="grid">
+                {sec.items.map((m) => (
+                  <article className="card" key={m.id}>
+                    <div className="cover">{m.emoji || '📖'}</div>
+                    <div className="body">
+                      <h4>{m.titulo}</h4>
+                      {m.descripcion && <p>{m.descripcion}</p>}
+                      <a className="abrir" href={urlPublicaPdf(m.archivo)} target="_blank" rel="noopener noreferrer">Abrir PDF</a>
+                    </div>
+                  </article>
+                ))}
               </div>
-            </article>
+            </section>
           ))}
         </div>
       )}
