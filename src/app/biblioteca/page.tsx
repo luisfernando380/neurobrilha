@@ -1,7 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { sb, urlPublicaPdf, lerToken, limparToken } from '@/lib/config';
+
+const PdfViewer = dynamic(() => import('./PdfViewer'), { ssr: false });
 
 type Material = {
   id: string; titulo: string; descripcion: string | null; emoji: string | null;
@@ -102,7 +105,7 @@ export default function Biblioteca() {
                 <button className="visor-cerrar" onClick={() => setAbierto(null)} aria-label="Cerrar">✕</button>
               </div>
             </div>
-            <iframe className="visor-pdf" src={`${urlPublicaPdf(abierto.archivo)}#view=FitH`} title={abierto.titulo} />
+            <PdfViewer url={urlPublicaPdf(abierto.archivo)} />
           </div>
         </div>
       )}
