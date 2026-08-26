@@ -9,8 +9,10 @@ export const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: { persistSession: false },
 });
 
+// Os PDFs sao servidos pelo proprio app (pasta public/materiales),
+// no mesmo dominio. Os nomes tem prefixo aleatorio (nao adivinhaveis).
 export const urlPublicaPdf = (archivo: string) =>
-  `${SUPABASE_URL}/storage/v1/object/public/materiales/${encodeURIComponent(archivo)}`;
+  `/materiales/${encodeURIComponent(archivo)}`;
 
 const LS = 'me_token';
 export const guardarToken = (t: string) => { try { localStorage.setItem(LS, t); } catch {} };
