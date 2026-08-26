@@ -26,6 +26,7 @@ export default function Biblioteca() {
   const [cargando, setCargando] = useState(true);
   const [nombre, setNombre] = useState<string | null>(null);
   const [materiales, setMateriales] = useState<Material[]>([]);
+  const [abierto, setAbierto] = useState<Material | null>(null);
 
   useEffect(() => {
     const tok = lerToken();
@@ -37,6 +38,15 @@ export default function Biblioteca() {
       setCargando(false);
     });
   }, [router]);
+
+  // Cerrar el visor con la tecla Esc y bloquear el scroll del fondo
+  useEffect(() => {
+    if (!abierto) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setAbierto(null); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+  }, [abierto]);
 
   function salir() { limparToken(); router.replace('/'); }
 
@@ -72,13 +82,28 @@ export default function Biblioteca() {
                     <div className="body">
                       <h4>{m.titulo}</h4>
                       {m.descripcion && <p>{m.descripcion}</p>}
-                      <a className="abrir" href={urlPublicaPdf(m.archivo)} target="_blank" rel="noopener noreferrer">Abrir PDF</a>
+                      <button className="abrir" onClick={() => setAbierto(m)}>Ver PDF</button>
                     </div>
                   </article>
                 ))}
               </div>
             </section>
           ))}
+        </div>
+      )}
+
+      {abierto && (
+        <div className="visor" role="dialog" aria-modal="true" onClick={() => setAbierto(null)}>
+          <div className="visor-caja" onClick={(e) => e.stopPropagation()}>
+            <div className="visor-top">
+              <span className="visor-titulo">{abierto.emoji} {abierto.titulo}</span>
+              <div className="visor-acciones">
+                <a className="visor-btn" href={urlPublicaPdf(abierto.archivo)} download target="_blank" rel="noopener noreferrer">Descargar</a>
+                <button className="visor-cerrar" onClick={() => setAbierto(null)} aria-label="Cerrar">✕</button>
+              </div>
+            </div>
+            <iframe className="visor-pdf" src={`${urlPublicaPdf(abierto.archivo)}#view=FitH`} title={abierto.titulo} />
+          </div>
         </div>
       )}
     </>

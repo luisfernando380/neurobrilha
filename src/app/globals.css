@@ -93,3 +93,14 @@ input:disabled { background: #f7f2f0; color: var(--texto-suave); }
 .card .abrir { margin-top: 14px; display: inline-block; text-align: center; padding: 11px; border-radius: 10px; font-weight: 700; font-size: 14px; color: #fff; text-decoration: none; background: linear-gradient(135deg, var(--rosa), var(--rosa-osc)); }
 .vacio { max-width: 640px; margin: 40px auto; text-align: center; color: var(--texto-suave); background:#fff; border:1px dashed var(--borde); border-radius:18px; padding:40px 24px; }
 .cargando { min-height: 100dvh; display: grid; place-items: center; color: var(--texto-suave); font-size: 15px; }
+.card .abrir { border: none; cursor: pointer; }
+
+/* Visor de PDF dentro del app */
+.visor { position: fixed; inset: 0; z-index: 50; background: rgba(58,43,47,.6); backdrop-filter: blur(3px); display: grid; place-items: center; padding: 16px; }
+.visor-caja { width: 100%; max-width: 900px; height: 92dvh; background: #fff; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+.visor-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--borde); background: #fff; }
+.visor-titulo { font-weight: 700; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.visor-acciones { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.visor-btn { padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; color: #fff; text-decoration: none; background: linear-gradient(135deg, var(--rosa), var(--rosa-osc)); }
+.visor-cerrar { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--borde); background: #fff; cursor: pointer; font-size: 15px; color: var(--texto-suave); }
+.visor-pdf { flex: 1; width: 100%; border: none; background: #f3eeec; }
