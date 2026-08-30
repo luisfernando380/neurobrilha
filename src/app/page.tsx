@@ -101,7 +101,8 @@ export default function Login() {
     <div className="auth-wrap">
       <div className="auth-card">
         <div className="marca">
-          <div className="logo">✦</div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="logo-img" src="/logo.png" alt="Mujeres Edifican" />
           <h1>Mujeres Edifican</h1>
           <div className="sub">Área exclusiva de miembros</div>
         </div>
