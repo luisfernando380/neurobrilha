@@ -36,6 +36,12 @@ a { color: var(--rosa-osc); }
   background: linear-gradient(135deg, var(--rosa), var(--rosa-osc));
   box-shadow: 0 8px 20px rgba(166,48,79,.28);
 }
+.marca .logo-img {
+  width: 104px; height: 104px; border-radius: 24px; margin: 0 auto 14px;
+  display: block; object-fit: cover;
+  box-shadow: 0 10px 26px rgba(166,48,79,.30);
+}
+.top .id .dot-img { width: 34px; height: 34px; border-radius: 9px; object-fit: cover; display: block; }
 .marca h1 { font-size: 21px; letter-spacing: .3px; font-weight: 700; }
 .marca .sub { color: var(--texto-suave); font-size: 13.5px; margin-top: 6px; }
 .paso-titulo { font-size: 16px; font-weight: 600; margin: 22px 0 4px; }

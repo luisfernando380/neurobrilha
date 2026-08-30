@@ -60,7 +60,8 @@ export default function Biblioteca() {
   return (
     <>
       <header className="top">
-        <div className="id"><span className="dot" /> Mujeres Edifican</div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <div className="id"><img className="dot-img" src="/logo.png" alt="" /> Mujeres Edifican</div>
         <button className="salir" onClick={salir}>Salir</button>
       </header>
 
